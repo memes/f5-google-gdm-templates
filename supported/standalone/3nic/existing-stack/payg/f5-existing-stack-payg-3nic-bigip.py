@@ -1,6 +1,8 @@
 # Copyright 2019 F5 Networks All rights reserved.
 #
 # Version 3.7.1
+import re
+import urllib
 
 """ Creates Deployment """
 COMPUTE_URL_BASE = 'https://www.googleapis.com/compute/v1/'
@@ -133,8 +135,11 @@ def Instance(context, network1SharedVpc):
               ]
             },
             'zone': context.properties['availabilityZone1'],
-            'metadata': Metadata(context)
-
+            'metadata': Metadata(context),
+            'serviceAccounts': [{
+                'email': context.properties['serviceAccount'],
+                'scopes': ['https://www.googleapis.com/auth/cloud-platform']
+            }]
         }
     }
 
@@ -365,9 +370,15 @@ def Metadata(context):
                                     'tmsh create sys management-ip ${MGMTADDRESS}/32',
                                     'tmsh save sys config',
                                     'EOF',
-                                    'curl -s -f --retry 20 -o /config/cloud/f5-cloud-libs.tar.gz https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs/v4.22.0/f5-cloud-libs.tar.gz',
-                                    'curl -s -f --retry 20 -o /config/cloud/f5-cloud-libs-gce.tar.gz https://cdn.f5.com/product/cloudsolutions/f5-cloud-libs-gce/v2.6.0/f5-cloud-libs-gce.tar.gz',
-                                    'curl -s -f --retry 20 -o /config/cloud/f5-appsvcs-3.20.0-3.noarch.rpm https://cdn.f5.com/product/cloudsolutions/f5-appsvcs-extension/v3.20.0/f5-appsvcs-3.20.0-3.noarch.rpm',
+                                    'TOKEN="$(curl "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token" -H "Metadata-Flavor: Google"|cut -d \'"\' -f4)"',
+                                    '\n'.join(
+                                        [
+                                            'curl -sfL --retry 20 -H "Authorization: Bearer $TOKEN" -o /config/cloud/{} {}'.format(
+                                                re.findall("([^/]*)\?alt=media$", urllib.parse.unquote(url))[0], url,
+                                            )
+                                            for url in context.properties['gcsURLs']
+                                        ]
+                                    ),
                                     'chmod 755 /config/verifyHash',
                                     'chmod 755 /config/installCloudLibs.sh',
                                     'chmod 755 /config/waitThenRun.sh',

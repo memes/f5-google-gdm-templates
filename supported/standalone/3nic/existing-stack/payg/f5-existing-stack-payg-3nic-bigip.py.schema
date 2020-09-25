@@ -115,6 +115,13 @@ properties:
     description: URL for the AS3 declaration JSON file to be deployed. If left at **default**, the recommended F5 WAF configuration will be applied. Enter **none** to deploy without a service configuration. For example, ' https://cdn.f5.com/product/cloudsolutions/declarations/sample_01.json '
     type: string
     default: default
+  serviceAccount:
+    description: Enter the Google service account to use for API calls, for example 'username@projectname.iam.serviceaccount.com'.
+    type: string
+  gcsURLs:
+    description: List of GCS URL files to download.
+    type: array
+    default: []
 documentation:
   - README.md
 examples:
