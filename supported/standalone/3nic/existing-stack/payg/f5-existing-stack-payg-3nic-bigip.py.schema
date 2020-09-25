@@ -119,7 +119,7 @@ properties:
     description: Enter the Google service account to use for API calls, for example 'username@projectname.iam.serviceaccount.com'.
     type: string
   gcsURLs:
-    description: List of GCS URL files to download.
+    description: List of GCS URL files to download of the form 'https://storage.googleapis.com/storage/v1/b/BUCKET_NAME/o/URL_ENCODED_PATH_TO_FILE?alt=media'.
     type: array
     default: []
 documentation:
