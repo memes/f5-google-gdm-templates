@@ -72,9 +72,9 @@ properties:
     type: string
     default: 'None'
   numberOfForwardingRules:
-    description: Enter the number of forwarding rules to create, for example '1'.  All integers from 1 to the max quota for the forwarding rules resource type are allowed.
+    description: Enter the number of forwarding rules to create, for example '1'.  All integers from 0 to the max quota for the forwarding rules resource type are allowed.
     type: integer
-    minimum: 1
+    minimum: 0
   provisionPublicIP:
     description: Provision Public IP addresses for BIG-IP Network Interfaces. By default it is set to provision public IPs.
     type: [string, boolean]
