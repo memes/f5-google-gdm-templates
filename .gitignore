@@ -51,3 +51,5 @@ cloud-tools/template-generator/venv/
 *__pycache__*
 # node modules
 node_modules/
+.direnv
+.envrc
