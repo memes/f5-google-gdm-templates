@@ -634,6 +634,18 @@ def Instance(context, group, storageName, licenseType, device, avZone, network1S
           }],
           'metadata': Metadata(context, group, storageName, licenseType)
     }
+  
+  # If not 'DYNAMIC'|'' assume a static address is needed
+  subnet1Address = context.properties['subnet1Address'].upper()
+  if subnet1Address != "DYNAMIC" and subnet1Address != "":
+      subnet1Addresses = subnet1Address.split()
+      if len(subnet1Addresses) >= int(device):
+        instance['networkInterfaces'][0]['networkIP'] = subnet1Addresses[int(device) - 1]
+  mgmtSubnetAddress = context.properties['mgmtSubnetAddress'].upper()
+  if mgmtSubnetAddress != "DYNAMIC" and mgmtSubnetAddress != "":
+      mgmtAddresses = mgmtSubnetAddress.split()
+      if len(mgmtAddresses) >= int(device):
+        instance['networkInterfaces'][1]['networkIP'] = mgmtAddresses[int(device) - 1]
   return instance
 def ForwardingRule(context, name, target):
   # Build forwarding rule
